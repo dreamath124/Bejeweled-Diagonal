@@ -1,1 +1,1 @@
-# Bejeweled-Diagonal
+# Bejeweled Diagonal
