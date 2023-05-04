@@ -13,10 +13,10 @@ const int cellEdge = 55;
 const int textureGemEdge = 45;
 const int gapGem = 5;
 
-SDL_Color lightGrey{0xD3, 0xD3, 0xD3, 0}, 
-                darkGray{0x69, 0x69, 0x69, 0};
+SDL_Color lightGrey{0xD3, 0xD3, 0xD3, 0},
+    darkGray{0x69, 0x69, 0x69, 0};
 
-Game::Game(): boardGem(boardSize, std::vector<Gem>(boardSize)), score(0), focusCell({-1, -1})
+Game::Game() : boardGem(boardSize, std::vector<Gem>(boardSize)), score(0), focusCell({-1, -1}), remove(boardSize)
 {
     for (int i = 0; i < boardSize; ++i)
         for (int j = 0; j < boardSize; ++j)
@@ -29,7 +29,7 @@ bool Game::updateMatch()
     bool update = false;
     for (int i = -9; i < 10; ++i)
     {
-        int begin = (i > 0 ? i: 0);
+        int begin = (i > 0 ? i : 0);
         Gem previous = UNDEFINED;
         for (int x = begin; x < 10 && x - i < 10; ++x)
         {
@@ -37,24 +37,24 @@ bool Game::updateMatch()
             {
                 if (x - begin == 2)
                 {
-                    boardGem[x - 1][x - i - 1] = boardGem[x - 2][x - i - 2]
-                    = UNDEFINED;
+                    remove[x - 1][x - i - 1] = remove[x - 2][x - i - 2] = 1;
                     update = true;
                 }
-                if (x - begin >= 2) 
+                if (x - begin >= 2)
                 {
-                    boardGem[x][x - i] = UNDEFINED;
+                    remove[x][x - i] = 1;
                     increaseScore(1);
                 }
             }
-            else begin = x;
+            else
+                begin = x;
             previous = boardGem[x][x - i];
         }
     }
 
     for (int i = 0; i < 2 * boardSize - 1; ++i)
     {
-        int begin = (i >= boardSize ? 9: i);
+        int begin = (i >= boardSize ? 9 : i);
         Gem previous = UNDEFINED;
         for (int x = begin; x >= 0 && i - x < 10; --x)
         {
@@ -62,17 +62,17 @@ bool Game::updateMatch()
             {
                 if (begin - x == 2)
                 {
-                    boardGem[x + 1][i - x - 1] = boardGem[x + 2][i - x - 2]
-                    = UNDEFINED;
+                    remove[x + 1][i - x - 1] = remove[x + 2][i - x - 2] = 1;
                     update = true;
                 }
-                if (begin - x >= 2) 
+                if (begin - x >= 2)
                 {
-                    boardGem[x][i - x] = UNDEFINED;
+                    remove[x][i - x] = 1;
                     increaseScore(1);
                 }
             }
-            else begin = x;
+            else
+                begin = x;
             previous = boardGem[x][i - x];
         }
     }
@@ -85,14 +85,15 @@ void Game::refill()
     {
         int tmpRow = boardSize;
         for (int row = boardSize - 1; row >= 0; --row)
-            if (boardGem[col][row] != UNDEFINED)
+            if (!remove[col][row])
                 boardGem[col][--tmpRow] = boardGem[col][row];
         for (int row = 0; row < tmpRow; ++row)
             boardGem[col][row] = getRandom();
+        remove[col].reset();
     }
 }
 
-void Game::render(SDL_Renderer* renderer)
+void Game::render(SDL_Renderer *renderer)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
@@ -105,53 +106,53 @@ void Game::render(SDL_Renderer* renderer)
                 baseX + i * cellEdge + gapGem,
                 baseY + j * cellEdge + gapGem,
                 textureGemEdge,
-                textureGemEdge
-            };
+                textureGemEdge};
             SDL_RenderCopy(renderer, gemTexture[boardGem[i][j]], NULL, &gemRect);
         }
-    if (focusCell.first == -1) return;
+    if (focusCell.first == -1)
+        return;
     SDL_Rect cellRect{
         baseX + focusCell.first * cellEdge,
         baseY + focusCell.second * cellEdge,
         cellEdge,
-        cellEdge
-    };
+        cellEdge};
     SDL_RenderCopy(renderer, focus, NULL, &cellRect);
     renderScore(renderer);
 }
 
-void Game::loadImageGallery(SDL_Renderer* renderer)
+void Game::loadImageGallery(SDL_Renderer *renderer)
 {
     std::string str[GEM_ITEMS] = {
         "red", "orange", "yellow", "green",
-        "blue", "purple", "white"
-    },
-    dir = "assets/webp/Bejeweled_";
+        "blue", "purple", "white"},
+                dir = "assets/webp/Bejeweled_";
     for (int i = 0; i < GEM_ITEMS; ++i)
     {
-        std::string address = dir + str[i] + 
-            "_gem_promotional.webp";
+        std::string address = dir + str[i] +
+                              "_gem_promotional.webp";
         gemTexture[i] = IMG_LoadTexture(renderer, getAbsPath(address.c_str()));
-        //SDL_SetTextureBlendMode(gemTexture[i], SDL_BLENDMODE_NONE);
+        // SDL_SetTextureBlendMode(gemTexture[i], SDL_BLENDMODE_NONE);
     }
     focus = IMG_LoadTexture(renderer, getAbsPath("assets/images/selector.png"));
 }
 
-bool Game::handleEvent(SDL_Event *e, SDL_Renderer* renderer)
+bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer)
 {
     if (e->type == SDL_MOUSEBUTTONDOWN)
     {
         int x, y;
         SDL_GetMouseState(&x, &y);
-        if (x < baseX || y < baseY) return false;
-        int row = (y - baseY) / cellEdge, 
+        if (x < baseX || y < baseY)
+            return false;
+        int row = (y - baseY) / cellEdge,
             col = (x - baseX) / cellEdge;
-        if (row >= 10 || col >= 10) return false;
+        if (row >= 10 || col >= 10)
+            return false;
         if (focusCell.first < 0)
         {
             focusCell = std::make_pair(col, row);
             SDL_Rect highlightRect{
-                baseX + col * cellEdge, 
+                baseX + col * cellEdge,
                 baseY + row * cellEdge,
                 52,
                 52,
@@ -162,19 +163,21 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer* renderer)
         {
             std::swap(
                 boardGem[focusCell.first][focusCell.second],
-                boardGem[col][row]
-            );
+                boardGem[col][row]);
             renderSwap(renderer, col, row, focusCell.first, focusCell.second);
             bool loopUpdate = false;
-            while (updateMatch()) {
+            while (updateMatch())
+            {
                 loopUpdate = true;
+                renderDisappear(renderer);
                 refill();
+                render(renderer);
             }
-            if(!loopUpdate) {
+            if (!loopUpdate)
+            {
                 std::swap(
-                boardGem[focusCell.first][focusCell.second],
-                boardGem[col][row]
-                );
+                    boardGem[focusCell.first][focusCell.second],
+                    boardGem[col][row]);
                 renderSwap(renderer, col, row, focusCell.first, focusCell.second);
             }
             focusCell.first = -1;
@@ -189,29 +192,29 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer* renderer)
     return false;
 }
 
-void Game::renderScore(SDL_Renderer* renderer)
+void Game::renderScore(SDL_Renderer *renderer)
 {
     std::string scoreString(10, ' ');
     std::string tmp = std::to_string(score);
     scoreString.replace(10 - tmp.size(), tmp.size(), tmp);
-    SDL_Texture* scoreTexture = getTextBox("assets/fonts/Times_New_Roman.ttf", 
-        64, scoreString.c_str(), renderer);
-    SDL_Texture* titleTexture = getTextBox("assets/fonts/Times_New_Roman.ttf",
-        64, "Score", renderer);
-    SDL_Rect scoreRect{10, 100, 100, 50}, headerRect{10, 150, 100, 50};    
+    SDL_Texture *scoreTexture = getTextBox("assets/fonts/Times_New_Roman.ttf",
+                                           64, scoreString.c_str(), renderer);
+    SDL_Texture *titleTexture = getTextBox("assets/fonts/Times_New_Roman.ttf",
+                                           64, "Score", renderer);
+    SDL_Rect scoreRect{10, 100, 100, 50}, headerRect{10, 150, 100, 50};
     SDL_RenderCopy(renderer, titleTexture, NULL, &scoreRect);
     SDL_RenderCopy(renderer, scoreTexture, NULL, &headerRect);
     SDL_DestroyTexture(scoreTexture);
     SDL_DestroyTexture(titleTexture);
 }
 
-/// @brief 
+/// @brief
 ///     Swap gem in pos(x, y) and pos(u, v)
-/// @param x 
-/// @param y 
-/// @param u 
-/// @param v 
-void Game::renderSwap(SDL_Renderer* renderer, int x, int y, int u, int v)
+/// @param x
+/// @param y
+/// @param u
+/// @param v
+void Game::renderSwap(SDL_Renderer *renderer, int x, int y, int u, int v)
 {
     uint32_t tick = SDL_GetTicks(), prevTick;
     bool moving = true;
@@ -226,31 +229,29 @@ void Game::renderSwap(SDL_Renderer* renderer, int x, int y, int u, int v)
         tick = SDL_GetTicks();
         ds += velocity * (tick - prevTick) * 0.001;
         SDL_FRect rXY = {
-            baseX + cellEdge*x + gapGem + activeX * ds,
-            baseY + cellEdge*y + gapGem + activeY * ds,
-            textureGemEdge,
-            textureGemEdge
-        },
-        rUV = {
-            baseX + cellEdge*u + gapGem - activeX * ds,
-            baseY + cellEdge*v + gapGem - activeY * ds,
-            textureGemEdge,
-            textureGemEdge
-        };
+                      baseX + cellEdge * x + gapGem + activeX * ds,
+                      baseY + cellEdge * y + gapGem + activeY * ds,
+                      textureGemEdge,
+                      textureGemEdge},
+                  rUV = {
+                    baseX + cellEdge * u + gapGem - activeX * ds, 
+                    baseY + cellEdge * v + gapGem - activeY * ds, 
+                    textureGemEdge, 
+                    textureGemEdge};
         renderCellBackground(renderer, x, y);
         renderCellBackground(renderer, u, v);
         SDL_RenderCopyF(renderer, gemTexture[boardGem[x][y]],
-            NULL, &rXY);
+                        NULL, &rXY);
         SDL_RenderCopyF(renderer, gemTexture[boardGem[u][v]],
-            NULL, &rUV);
+                        NULL, &rUV);
         SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
 }
 
-void Game::renderCellBackground(SDL_Renderer* renderer, int x, int y)
+void Game::renderCellBackground(SDL_Renderer *renderer, int x, int y)
 {
-    SDL_Color color = ((x + y) % 2 ? lightGrey: darkGray);
+    SDL_Color color = ((x + y) % 2 ? lightGrey : darkGray);
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_Rect cellRect{
         baseX + x * cellEdge,
@@ -258,4 +259,30 @@ void Game::renderCellBackground(SDL_Renderer* renderer, int x, int y)
         cellEdge,
         cellEdge};
     SDL_RenderFillRect(renderer, &cellRect);
+}
+
+void Game::renderDisappear(SDL_Renderer *renderer)
+{
+    for (int scene = 0; scene < 8; ++scene)
+    {
+        SDL_Delay(32);
+        for (int i = 0; i < boardSize; ++i)
+            for (int j = 0; j < boardSize; ++j)
+                if (remove[i][j])
+                {
+                    renderCellBackground(renderer, i, j);
+                    SDL_Rect zoomGem{
+                        baseX + i * cellEdge + scene * 3 + 5,
+                        baseY + j * cellEdge + scene * 3 + 5,
+                        textureGemEdge - scene * 6,
+                        textureGemEdge - scene * 6};
+                    SDL_RenderCopy(renderer, gemTexture[boardGem[i][j]], NULL, &zoomGem);
+                }
+        SDL_RenderPresent(renderer);
+    }
+}
+
+void Game::renderReset(SDL_Renderer* renderer)    
+{
+    
 }

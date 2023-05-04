@@ -27,7 +27,7 @@ const int boardSize = 10;
 
 class Game{
     std::vector<std::vector<Gem>> boardGem;
-    //std::vector<std::bitset<boardSize>> remove;
+    std::vector<std::bitset<boardSize>> remove;
     std::vector<std::vector<Gem>> a, b;
     int score;
     std::pair<int, int> focusCell;
@@ -45,6 +45,8 @@ public:
     void renderScore(SDL_Renderer *renderer);
     void renderSwap(SDL_Renderer* renderer, int x, int y, int u, int v);
     void renderCellBackground(SDL_Renderer *renderer, int x, int y);
+    void renderDisappear(SDL_Renderer *renderer);
+    void renderReset(SDL_Renderer* renderer);
     void changeFocusCell(int x, int y)
     {
         focusCell.first = x;
