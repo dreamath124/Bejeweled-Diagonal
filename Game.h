@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdlib>
 #include <bits/stl_pair.h>
+#include <bitset>
 enum Gem{
     Red,
     Yellow,
@@ -12,28 +13,38 @@ enum Gem{
     Blue,
     Purple,
     White,
-    GEM_ITEMS = 7
+    GEM_ITEMS = 7,
+    UNDEFINED
+};
+
+enum RenderState{
+    notmove,
+    swap,
+    slide
 };
 
 const int boardSize = 10;
 
 class Game{
     std::vector<std::vector<Gem>> boardGem;
+    //std::vector<std::bitset<boardSize>> remove;
+    std::vector<std::vector<Gem>> a, b;
     int score;
     std::pair<int, int> focusCell;
     SDL_Texture* gemTexture[GEM_ITEMS];
+    SDL_Texture* focus;
+    SDL_Texture* background;
 public:
-    Game(): boardGem(boardSize, std::vector<Gem>(boardSize)), score(0), focusCell({-1, -1})
-    {
-        for (int i = 0; i < boardSize; ++i)
-            for (int j = 0; j < boardSize; ++j)
-                boardGem[i][j] = getRandom();
-    }
-    void increaseScore();
-    std::vector<int> checkMatching(int x, int y);
+    Game();
+    void increaseScore(int match);
+    bool updateMatch();
+    void refill();
     void render(SDL_Renderer *renderer);
     void loadImageGallery(SDL_Renderer *renderer);
-    bool handleEvent(SDL_Event *e);
+    bool handleEvent(SDL_Event *e, SDL_Renderer* renderer);
+    void renderScore(SDL_Renderer *renderer);
+    void renderSwap(SDL_Renderer* renderer, int x, int y, int u, int v);
+    void renderCellBackground(SDL_Renderer *renderer, int x, int y);
     void changeFocusCell(int x, int y)
     {
         focusCell.first = x;
