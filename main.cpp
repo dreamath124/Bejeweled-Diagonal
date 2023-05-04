@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     while(isRunning)
     {
         SDL_Event e;
-        while(SDL_PollEvent(&e))
+        if (SDL_WaitEvent(&e))
         {
             if (e.type == SDL_QUIT)
             {
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
                 break;
             }
             if (context == GAME)
-                game.handleEvent(&e);
+                game.handleEvent(&e, window.renderer);
             else
                 if (menu.handleEvent(&e))
                     context = GAME;
@@ -39,8 +39,7 @@ int main(int argc, char* argv[])
             SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255);
         }
         SDL_RenderPresent(window.renderer);
-        SDL_Delay(16);
+        SDL_Delay(10);
     }
-    SDL_Quit();
     return 0;
 }
