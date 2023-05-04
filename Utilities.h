@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 static const SDL_Color 
     GREEN = {32, 192, 32, 0},
@@ -21,5 +22,8 @@ static const SDL_Color PURE_BLACK = {0, 0, 0, 0};
 
 char* getAbsPath(const char* path);
 
+SDL_Texture* getTextBox(const char* srcFont, int ptSize, const char* str, SDL_Renderer* renderer);
+
+int sgn(int x);
 
 #endif

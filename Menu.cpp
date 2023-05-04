@@ -4,22 +4,8 @@
 #include <iostream>
 #include "Window.h"
 
-const char* Times_New_Roman = getAbsPath("assets/fonts/Times_New_Roman.ttf");
+const char* Times_New_Roman = "assets/fonts/Times_New_Roman.ttf";
 const int Button_Font_Size = 128;
-
-SDL_Texture* getTextBox(const char* srcFont, int ptSize, const char* str, SDL_Renderer* renderer)
-{
-    TTF_Init();
-    TTF_Font *font = TTF_OpenFont(srcFont, ptSize);
-    if (font == NULL)
-        return NULL;
-    SDL_Surface* textSurface = TTF_RenderText_Blended(font, str, BLUE);
-    if (textSurface == NULL)
-        return NULL;
-    SDL_Texture* text = SDL_CreateTextureFromSurface(renderer, textSurface);
-    SDL_FreeSurface(textSurface);
-    return text;
-}
 
 Menu::Menu(SDL_Renderer* renderer, Game &game): 
     renderer(renderer), 
