@@ -28,7 +28,7 @@ const int boardSize = 10;
 class Game{
     std::vector<std::vector<Gem>> boardGem;
     std::vector<std::bitset<boardSize>> remove;
-    std::vector<std::vector<Gem>> a, b;
+    std::vector<std::vector<int>> prevRow;
     int score;
     std::pair<int, int> focusCell;
     SDL_Texture* gemTexture[GEM_ITEMS];

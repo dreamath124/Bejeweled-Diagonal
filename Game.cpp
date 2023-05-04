@@ -16,11 +16,18 @@ const int gapGem = 5;
 SDL_Color lightGrey{0xD3, 0xD3, 0xD3, 0},
     darkGray{0x69, 0x69, 0x69, 0};
 
-Game::Game() : boardGem(boardSize, std::vector<Gem>(boardSize)), score(0), focusCell({-1, -1}), remove(boardSize)
+Game::Game() : 
+    boardGem(boardSize, std::vector<Gem>(boardSize)), 
+    score(0), 
+    focusCell({-1, -1}), 
+    remove(boardSize),
+    prevRow(boardSize, std::vector<int>(boardSize))
 {
     for (int i = 0; i < boardSize; ++i)
         for (int j = 0; j < boardSize; ++j)
             boardGem[i][j] = getRandom();
+    while (updateMatch())
+        refill();
     score = 0;
 }
 
@@ -86,9 +93,15 @@ void Game::refill()
         int tmpRow = boardSize;
         for (int row = boardSize - 1; row >= 0; --row)
             if (!remove[col][row])
+            {
                 boardGem[col][--tmpRow] = boardGem[col][row];
+                prevRow[col][tmpRow] = row;
+            }
         for (int row = 0; row < tmpRow; ++row)
+        {
             boardGem[col][row] = getRandom();
+            prevRow[col][row] = row - tmpRow;
+        }
         remove[col].reset();
     }
 }
@@ -131,7 +144,6 @@ void Game::loadImageGallery(SDL_Renderer *renderer)
         std::string address = dir + str[i] +
                               "_gem_promotional.webp";
         gemTexture[i] = IMG_LoadTexture(renderer, getAbsPath(address.c_str()));
-        // SDL_SetTextureBlendMode(gemTexture[i], SDL_BLENDMODE_NONE);
     }
     focus = IMG_LoadTexture(renderer, getAbsPath("assets/images/selector.png"));
 }
@@ -171,6 +183,7 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer)
                 loopUpdate = true;
                 renderDisappear(renderer);
                 refill();
+                renderReset(renderer);
                 render(renderer);
             }
             if (!loopUpdate)
@@ -263,7 +276,7 @@ void Game::renderCellBackground(SDL_Renderer *renderer, int x, int y)
 
 void Game::renderDisappear(SDL_Renderer *renderer)
 {
-    for (int scene = 0; scene < 8; ++scene)
+    for (int scene = 0; scene < 5; ++scene)
     {
         SDL_Delay(32);
         for (int i = 0; i < boardSize; ++i)
@@ -272,10 +285,10 @@ void Game::renderDisappear(SDL_Renderer *renderer)
                 {
                     renderCellBackground(renderer, i, j);
                     SDL_Rect zoomGem{
-                        baseX + i * cellEdge + scene * 3 + 5,
-                        baseY + j * cellEdge + scene * 3 + 5,
-                        textureGemEdge - scene * 6,
-                        textureGemEdge - scene * 6};
+                        baseX + i * cellEdge + scene * 5 + 5,
+                        baseY + j * cellEdge + scene * 5 + 5,
+                        textureGemEdge - scene * 10,
+                        textureGemEdge - scene * 10};
                     SDL_RenderCopy(renderer, gemTexture[boardGem[i][j]], NULL, &zoomGem);
                 }
         SDL_RenderPresent(renderer);
@@ -284,5 +297,41 @@ void Game::renderDisappear(SDL_Renderer *renderer)
 
 void Game::renderReset(SDL_Renderer* renderer)    
 {
-    
+    int longestMove = 0;
+    for (int i = 0; i < boardSize; ++i)
+        if (prevRow[i][0] < -longestMove)
+            longestMove = -prevRow[i][0];
+    longestMove *= cellEdge;
+    float ds = 0;
+    SDL_Rect clearRect = {baseX, baseY, boardSize * cellEdge, boardSize * cellEdge};
+    while(ds <= longestMove)
+    {
+        SDL_Delay(16);
+        ds += 3.2;
+        for (int i = 0; i < boardSize; ++i)
+            for (int j = 0; j < boardSize; ++j)
+                renderCellBackground(renderer, i, j);
+        for (int i = 0; i < boardSize; ++i) 
+            for (int j = 0; j < boardSize; ++j)
+            {
+                float diff = (prevRow[i][j] - j) * cellEdge + ds;
+                if (diff > 0) diff = 0;
+                SDL_FRect gemRect={
+                    baseX + i * cellEdge + gapGem,
+                    diff + baseY + j * cellEdge + gapGem , 
+                    textureGemEdge,
+                    textureGemEdge
+                };
+                if (gemRect.x > 0)
+                    SDL_RenderCopyF(
+                        renderer,
+                        gemTexture[boardGem[i][j]],
+                        NULL,
+                        &gemRect
+                    );
+            }
+        SDL_RenderPresent(renderer);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderFillRect(renderer, &clearRect);
+    }
 }
