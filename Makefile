@@ -5,7 +5,7 @@ all: build/Bejeweled-Diagonal
 build/Bejeweled-Diagonal: main.o Game.o Button.o Menu.o Utilities.o
 	g++ $^ -o $@ $(LDFLAGS)
 
-main.o: main.cpp Window.h
+main.o: main.cpp Window.h Help.h
 	g++ -c $< -o $@
 
 Game.o: Game.cpp Game.h
