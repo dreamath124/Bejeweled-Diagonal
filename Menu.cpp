@@ -4,7 +4,7 @@
 #include <iostream>
 #include "Window.h"
 
-const char* Times_New_Roman = "assets/fonts/Times_New_Roman.ttf";
+const char* Times_New_Roman = "assets/fonts/Digital7-rg1mL.ttf";
 const int Button_Font_Size = 128;
 
 Menu::Menu(SDL_Renderer* renderer, Game &game): 

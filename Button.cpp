@@ -30,7 +30,6 @@ bool Button::handleEvent(SDL_Event *e)
 void Button::render(SDL_Renderer* renderer)
 {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-    SDL_SetTextureAlphaMod(texture, 128);
     SDL_RenderFillRect(renderer, &rect);
     SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
