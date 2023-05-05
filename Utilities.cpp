@@ -9,7 +9,6 @@ char* getAbsPath(const char* path)
 }
 SDL_Texture* getTextBox(const char* srcFont, int ptSize, const char* str, SDL_Renderer* renderer)
 {
-    TTF_Init();
     TTF_Font *font = TTF_OpenFont(getAbsPath(srcFont), ptSize);
     if (font == NULL)
         return NULL;

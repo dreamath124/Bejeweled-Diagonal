@@ -1,6 +1,7 @@
 #ifndef __WINDOW_H
 #define __WINDOW_H
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <cstdlib>
 #include <ctime>
 #include <string>
@@ -30,6 +31,7 @@ public:
         SDL_SetWindowIcon(window, appIcon);
         SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+        TTF_Init();
         std::srand(std::time(NULL));
     }
     ~Window()
