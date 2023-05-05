@@ -7,11 +7,11 @@
 #include <SDL2/SDL_ttf.h>
 
 static const SDL_Color 
-    GREEN = {32, 192, 32, 0},
-    BLUE = {32, 32, 192, 0},
-    RED = {192, 32, 32},
-    GREY = {128, 128, 128, 0},
-    PINK = {255, },
+    GREEN = {0, 0x80, 0, 0},
+    BLUE = {0, 0, 0xFF, 0},
+    RED = {0x8B, 0x0, 0x0, 0x0},
+    GREY = {0x80, 0x80, 0x80, 0},
+    PINK = {0xFF, 0x0F, 0x0F, 0},
     NEON_PINK = {255, 16, 240};
 
 // hex code color
