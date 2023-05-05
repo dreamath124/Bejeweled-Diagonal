@@ -34,11 +34,11 @@ Game::Game() :
 bool Game::updateMatch()
 {
     bool update = false;
-    for (int i = -9; i < 10; ++i)
+    for (int i = -boardSize + 1; i < boardSize; ++i)
     {
         int begin = (i > 0 ? i : 0);
         Gem previous = UNDEFINED;
-        for (int x = begin; x < 10 && x - i < 10; ++x)
+        for (int x = begin; x < boardSize && x - i < boardSize; ++x)
         {
             if (boardGem[x][x - i] == previous)
             {
@@ -61,9 +61,9 @@ bool Game::updateMatch()
 
     for (int i = 0; i < 2 * boardSize - 1; ++i)
     {
-        int begin = (i >= boardSize ? 9 : i);
+        int begin = (i >= boardSize ? boardSize - 1 : i);
         Gem previous = UNDEFINED;
-        for (int x = begin; x >= 0 && i - x < 10; --x)
+        for (int x = begin; x >= 0 && i - x < boardSize; --x)
         {
             if (boardGem[x][i - x] == previous)
             {
@@ -158,7 +158,7 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer)
             return false;
         int row = (y - baseY) / cellEdge,
             col = (x - baseX) / cellEdge;
-        if (row >= 10 || col >= 10)
+        if (row >= boardSize || col >= boardSize)
             return false;
         if (focusCell.first < 0)
         {

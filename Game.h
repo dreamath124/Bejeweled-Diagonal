@@ -23,7 +23,7 @@ enum RenderState{
     slide
 };
 
-const int boardSize = 10;
+const int boardSize = 8;
 
 class Game{
     std::vector<std::vector<Gem>> boardGem;
