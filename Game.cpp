@@ -207,12 +207,12 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer)
 
 void Game::renderScore(SDL_Renderer *renderer)
 {
-    std::string scoreString(10, ' ');
+    std::string scoreString(9, ' ');
     std::string tmp = std::to_string(score);
-    scoreString.replace(10 - tmp.size(), tmp.size(), tmp);
-    SDL_Texture *scoreTexture = getTextBox("assets/fonts/Times_New_Roman.ttf",
+    scoreString.replace(9 - tmp.size(), tmp.size(), tmp);
+    SDL_Texture *scoreTexture = getTextBox("assets/fonts/Digital7-rg1mL.ttf",
                                            64, scoreString.c_str(), renderer);
-    SDL_Texture *titleTexture = getTextBox("assets/fonts/Times_New_Roman.ttf",
+    SDL_Texture *titleTexture = getTextBox("assets/fonts/Digital7-rg1mL.ttf",
                                            64, "Score", renderer);
     SDL_Rect scoreRect{10, 100, 100, 50}, headerRect{10, 150, 100, 50};
     SDL_RenderCopy(renderer, titleTexture, NULL, &scoreRect);
@@ -303,7 +303,7 @@ void Game::renderReset(SDL_Renderer* renderer)
             longestMove = -prevRow[i][0];
     longestMove *= cellEdge;
     float ds = 0;
-    SDL_Rect clearRect = {baseX, baseY, boardSize * cellEdge, boardSize * cellEdge};
+    SDL_Rect clearRect = {baseX, 0, boardSize * cellEdge, boardSize * cellEdge};
     while(ds <= longestMove)
     {
         SDL_Delay(16);
