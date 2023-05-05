@@ -4,22 +4,23 @@
 #include <iostream>
 #include "Button.h"
 #include "Game.h"
+#include "Scoreboard.h"
 
-enum ButtonList
-{
-    menu, 
-    play,
-    scores,
-    help
+enum EventStatus{
+    GAME,
+    HELP,
+    EXIT,
+    NOT_HANDLED
 };
 
 class Menu{
     SDL_Renderer* renderer;
     Button play, help, exit;
-    Game& game;
+    Game &game;
+    Scoreboard &scoreboard;
 public:
-    Menu(SDL_Renderer* renderer, Game &game);
+    Menu(SDL_Renderer* renderer);
     void show();
-    bool handleEvent(SDL_Event *e);
+    EventStatus handleEvent(SDL_Event *e);
 };
 #endif

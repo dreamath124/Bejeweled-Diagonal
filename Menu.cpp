@@ -7,7 +7,7 @@
 const char* Times_New_Roman = "assets/fonts/Digital7-rg1mL.ttf";
 const int Button_Font_Size = 128;
 
-Menu::Menu(SDL_Renderer* renderer, Game &game): 
+Menu::Menu(SDL_Renderer* renderer): 
     renderer(renderer), 
     play(150, 300, 100, 50, 
         getTextBox(Times_New_Roman, Button_Font_Size, "PLAY", renderer),
@@ -18,8 +18,8 @@ Menu::Menu(SDL_Renderer* renderer, Game &game):
     exit(150, 450, 100, 50,
         getTextBox(Times_New_Roman, Button_Font_Size, "EXIT", renderer),
         NEON_PINK),
-    game(game)
-
+    game(game),
+    scoreboard(scoreboard)
 {
     
 }
@@ -32,20 +32,13 @@ void Menu::show()
     SDL_RenderPresent(renderer);
 }
 
-bool Menu::handleEvent(SDL_Event *e)
+EventStatus Menu::handleEvent(SDL_Event *e)
 { 
     if(play.handleEvent(e))
-    {
-        game.render(renderer);
-        return true;
-    }
+        return GAME;
     if(help.handleEvent(e))
-    {
-        //helpText.render();
-        return false;;
-    }
+        return HELP;
     if(exit.handleEvent(e))
-        //Quit();
-        return false;
-    return false;
+        return EXIT;
+    return NOT_HANDLED;
 }

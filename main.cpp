@@ -3,19 +3,18 @@
 #include "Window.h"
 #include "Menu.h"
 #include "Utilities.h"
-enum Context{
-    MENU,
-    GAME
-};
+#include "Help.h"
 
 int main(int argc, char* argv[])
 {
     Window window;
     Game game;
+    Help help("helpText.txt");
     game.loadImageGallery(window.renderer);
-    Menu menu(window.renderer, game);
+    //Scoreboard scoreboard("scores.txt", window);
+    Menu menu(window.renderer);
     bool isRunning = true;
-    Context context = MENU;
+    EventStatus status = NOT_HANDLED;
     while(isRunning)
     {
         SDL_Event e;
@@ -26,17 +25,23 @@ int main(int argc, char* argv[])
                 isRunning = false;
                 break;
             }
-            if (context == GAME)
-                game.handleEvent(&e, window.renderer);
-            else
-                if (menu.handleEvent(&e))
-                    context = GAME;
         }
-        if (context == GAME) 
-            game.render(window.renderer); 
-        else {
+        if (status == NOT_HANDLED)
+        {
             menu.show();
-            SDL_SetRenderDrawColor(window.renderer, 0, 0, 0, 255);
+            status = menu.handleEvent(&e);
+        }
+        if (status == GAME)
+        {
+            game.handleEvent(&e, window.renderer);
+            game.render(window.renderer);
+        }
+        if (status == HELP)
+            help.render(window.renderer);
+        if (status == EXIT)
+        {
+            isRunning = false;
+            continue;
         }
         SDL_RenderPresent(window.renderer);
         SDL_Delay(10);
