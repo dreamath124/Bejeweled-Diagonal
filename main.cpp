@@ -4,6 +4,8 @@
 #include "Menu.h"
 #include "Utilities.h"
 #include "Help.h"
+#include "ScoreWindow.h"
+#include "Scoreboard.h"
 
 int main(int argc, char* argv[])
 {
@@ -11,8 +13,10 @@ int main(int argc, char* argv[])
     Game game;
     Help help("helpText.txt");
     game.loadImageGallery(window.renderer);
-    //Scoreboard scoreboard("scores.txt", window);
+    Scoreboard scoreboard("scores.txt");
     Menu menu(window.renderer);
+    ScoreWindow scoreWindow(window, scoreboard);
+
     bool isRunning = true;
     EventStatus status = NOT_HANDLED;
     while(isRunning)
@@ -26,9 +30,10 @@ int main(int argc, char* argv[])
                 break;
             }
         }
+        if (status == HELP) continue;
         if (status == NOT_HANDLED)
         {
-            menu.show();
+            menu.show(window.renderer);
             status = menu.handleEvent(&e);
         }
         if (status == GAME)
@@ -38,6 +43,11 @@ int main(int argc, char* argv[])
         }
         if (status == HELP)
             help.render(window.renderer);
+        if (status == SCOREBOARD)
+        {
+            scoreWindow.handleEvent(e);
+            scoreWindow.renderUpdate();
+        }
         if (status == EXIT)
         {
             isRunning = false;

@@ -10,17 +10,15 @@ enum EventStatus{
     GAME,
     HELP,
     EXIT,
+    SCOREBOARD,
     NOT_HANDLED
 };
 
 class Menu{
-    SDL_Renderer* renderer;
-    Button play, help, exit;
-    Game &game;
-    Scoreboard &scoreboard;
+    Button play, help, exit, scoreboard;
 public:
     Menu(SDL_Renderer* renderer);
-    void show();
+    void show(SDL_Renderer* renderer);
     EventStatus handleEvent(SDL_Event *e);
 };
 #endif
