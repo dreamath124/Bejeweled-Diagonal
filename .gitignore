@@ -1,4 +1,9 @@
 *.exe
 *.o
 .vscode/
-build/
+build/.cmake/
+build/CMakeFiles
+build/Makefile
+*.cmake
+CMakeCache.txt
+build/compile_commands.json
