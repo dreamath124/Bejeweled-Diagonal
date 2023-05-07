@@ -17,7 +17,7 @@ enum EventStatus{
 class Menu{
     Button play, help, exit, scoreboard;
 public:
-    Menu(SDL_Renderer* renderer);
+    Menu(SDL_Renderer* renderer, TextEngine &engine);
     void show(SDL_Renderer* renderer);
     EventStatus handleEvent(SDL_Event *e);
 };

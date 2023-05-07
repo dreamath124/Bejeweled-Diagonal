@@ -1,15 +1,11 @@
 #include "ScoreWindow.h"
 #include "Utilities.h"
 
-ScoreWindow::ScoreWindow(Window &window,
-                         Scoreboard &listScore) : 
-                         page(0), renderer(window.renderer), alpha(listScore.listScore)
+ScoreWindow::ScoreWindow(Scoreboard &listScore, TextEngine &engine) : 
+                         page(0), alpha(listScore.listScore),
+                         engine(engine)
 {
-    TTF_Font *font = TTF_OpenFont(srcFont, 24);
-    SDL_Surface *fontSurface = TTF_RenderText_Solid(font, WINDOW_TITLE, NEON_PINK);
-    texture = SDL_CreateTextureFromSurface(renderer, fontSurface);
-    SDL_FreeSurface(fontSurface);
-    TTF_CloseFont(font);
+
 }
 
 
@@ -27,17 +23,13 @@ void ScoreWindow::renderUpdate()
     int begin = page *PAGE_SIZE,
     end = std::min(begin + PAGE_SIZE, (int)alpha.size());
     SDL_Rect headerRect{350, 0, 100, 50};
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, &headerRect);
+    engine.displayTextbox(WINDOW_TITLE, 400, 30);
     for (int i = begin; i < end; ++i)
     {
-        SDL_Texture* texture = getTextBox(
-            fontPath, 36, (std::to_string(i) + ". " + alpha[i].name).c_str(), renderer);
-        SDL_Rect rect;
-        SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
-        rect.x = 100;
-        rect.y = (i - begin + 1) * 50;
-        SDL_RenderCopy(renderer, texture, NULL, &rect);
+        int y = 100 + (i - begin) * 50;
+        engine.displayNumber(i, 50, y);
+        engine.displayTextbox(alpha[i].name, 200, y);
+        engine.displayNumber(alpha[i].duration, 400, y);
+        engine.displayNumber(alpha[i].score, 600, y);
     }
-    SDL_RenderPresent(renderer);
 }

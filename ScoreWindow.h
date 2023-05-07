@@ -7,23 +7,17 @@
 #include "Window.h"
 #include "Score.h"
 #include "Scoreboard.h"
+#include "TextEngine.h"
 
 class ScoreWindow
 {
-    SDL_Texture* texture;
-    SDL_Renderer* const renderer;
     int page;
-
-    const char* WINDOW_TITLE = "Highest scores";
+    TextEngine &engine;
+    std::string WINDOW_TITLE = "Highest scores";
     const int PAGE_SIZE = 10;
-    const char* srcFont = "assets/fonts/Times_New_Roman.ttf";
-    const char* fontPath = "assets/fonts/Digital7-rg1mL.ttf";
     const std::vector<Score> &alpha;
 public:
-    ScoreWindow(
-        Window &window,
-        Scoreboard &listScore
-    );
+    ScoreWindow(Scoreboard& scoreboard, TextEngine& enginPe);
     bool handleEvent(SDL_Event &e);
     void renderUpdate();
 };

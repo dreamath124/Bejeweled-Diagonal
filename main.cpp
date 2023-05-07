@@ -6,19 +6,22 @@
 #include "Help.h"
 #include "ScoreWindow.h"
 #include "Scoreboard.h"
+#include "TextEngine.h"
 
 int main(int argc, char* argv[])
 {
     Window window;
+    TextEngine engine(window.renderer);
     Game game;
     Help help("helpText.txt");
     game.loadImageGallery(window.renderer);
     Scoreboard scoreboard("scores.txt");
-    Menu menu(window.renderer);
-    ScoreWindow scoreWindow(window, scoreboard);
+    Menu menu(window.renderer, engine);
+    ScoreWindow scoreWindow(scoreboard, engine);
 
     bool isRunning = true;
     EventStatus status = NOT_HANDLED;
+    menu.show(window.renderer);
     while(isRunning)
     {
         SDL_Event e;
@@ -33,8 +36,8 @@ int main(int argc, char* argv[])
         if (status == HELP) continue;
         if (status == NOT_HANDLED)
         {
-            menu.show(window.renderer);
             status = menu.handleEvent(&e);
+            if (status == NOT_HANDLED) continue;
         }
         if (status == GAME)
         {

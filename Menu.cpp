@@ -7,21 +7,11 @@
 const char* Times_New_Roman = "assets/fonts/Digital7-rg1mL.ttf";
 const int Button_Font_Size = 128;
 
-Menu::Menu(SDL_Renderer* renderer): 
-    play(150, 300, 100, 50, 
-        getTextBox(Times_New_Roman, Button_Font_Size, "PLAY", renderer),
-        GREEN),
-    help(150, 375, 100, 50, 
-        getTextBox(Times_New_Roman, Button_Font_Size, "HELP", renderer),
-        RED),
-    exit(150, 450, 100, 50,
-        getTextBox(Times_New_Roman, Button_Font_Size, "EXIT", renderer),
-        NEON_PINK),
-    scoreboard(
-        150, 500, 100, 50,
-        getTextBox(Times_New_Roman, Button_Font_Size, "SCORE", renderer),
-        PURE_BLACK
-    )
+Menu::Menu(SDL_Renderer* renderer, TextEngine& engine): 
+    play(SDL_Rect{150, 300, 100, 50}, engine, "PLAY", PURE_BLACK),
+    help(SDL_Rect{150, 375, 100, 50}, engine, "HELP", PURE_BLACK),
+    exit(SDL_Rect{150, 450, 100, 50}, engine, "EXIT", PURE_BLACK),
+    scoreboard(SDL_Rect{150, 500, 100, 50}, engine, "Exit", PURE_BLACK)
 {
     
 }

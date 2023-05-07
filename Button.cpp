@@ -10,8 +10,8 @@ bool Button::isInsideRect(SDL_Point point)
     );
 }
 
-Button::Button(int centerX, int centerY, int w, int h, SDL_Texture *texture, SDL_Color color) : 
-    rect{centerX - w / 2, centerY - h / 2, w, h}, texture(texture), color(color)
+Button::Button(SDL_Rect rect, TextEngine &engine, std::string label, SDL_Color color) : 
+    rect(rect), engine(engine), label(label), bgColor(color)
 {
 }
 
@@ -29,7 +29,7 @@ bool Button::handleEvent(SDL_Event *e)
 
 void Button::render(SDL_Renderer* renderer)
 {
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
     SDL_RenderFillRect(renderer, &rect);
-    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    engine.displayTextbox(label, rect.x + rect.w/2, rect.y + rect.h/2);
 }
