@@ -196,7 +196,7 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer, TextEngine& engine)
                     boardGem[col][row]);
                 renderSwap(renderer, col, row, focusCell.first, focusCell.second);
             }
-            else {++countMove; std::cout << countMove << '\n';}
+            else ++countMove; 
             focusCell.first = -1;
             return true;
         }
@@ -225,12 +225,6 @@ void Game::renderScore(SDL_Renderer *renderer)
     SDL_DestroyTexture(titleTexture);
 }
 
-/// @brief
-///     Swap gem in pos(x, y) and pos(u, v)
-/// @param x
-/// @param y
-/// @param u
-/// @param v
 void Game::renderSwap(SDL_Renderer *renderer, int x, int y, int u, int v)
 {
     uint32_t tick = SDL_GetTicks(), prevTick;
