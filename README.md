@@ -24,6 +24,7 @@ cd build
 ```
 
 ## How to play
-    Click two adjancent gems.
-    If board after swap them exist a chain of 3 or more same gem in 
+
+Click to two adjancent gems.  
+If board after swap them exist a chain of 3 or more same gem in 
 a diagonal, then two gem will swap and after, gem in this chain disappear.
