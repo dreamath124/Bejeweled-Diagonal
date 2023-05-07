@@ -29,6 +29,7 @@ Game::Game() :
     while (updateMatch())
         refill();
     score = 0;
+    countMove = 0;
 }
 
 bool Game::updateMatch()
@@ -148,8 +149,10 @@ void Game::loadImageGallery(SDL_Renderer *renderer)
     focus = IMG_LoadTexture(renderer, getAbsPath("assets/images/selector.png"));
 }
 
-bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer)
+bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer, TextEngine& engine)
 {
+    if (countMove == maxMove) {renderGameOver(renderer, engine);
+        return false;}
     if (e->type == SDL_MOUSEBUTTONDOWN)
     {
         int x, y;
@@ -193,6 +196,7 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer)
                     boardGem[col][row]);
                 renderSwap(renderer, col, row, focusCell.first, focusCell.second);
             }
+            else {++countMove; std::cout << countMove << '\n';}
             focusCell.first = -1;
             return true;
         }
@@ -202,7 +206,7 @@ bool Game::handleEvent(SDL_Event *e, SDL_Renderer *renderer)
             return true;
         }
     }
-    return false;
+    return true;
 }
 
 void Game::renderScore(SDL_Renderer *renderer)
@@ -334,4 +338,12 @@ void Game::renderReset(SDL_Renderer* renderer)
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderFillRect(renderer, &clearRect);
     }
+}
+
+void Game::renderGameOver(SDL_Renderer* renderer, TextEngine& engine)
+{
+    SDL_RenderClear(renderer);
+    engine.displayTextbox("GAME OVER", 400, 300);
+    std::string scoreText = "Your Score: " + std::to_string(score);
+    engine.displayTextbox(scoreText, 400, 400);
 }

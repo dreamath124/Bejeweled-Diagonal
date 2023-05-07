@@ -21,7 +21,8 @@ int main(int argc, char* argv[])
 
     bool isRunning = true;
     EventStatus status = NOT_HANDLED;
-    menu.show(window.renderer);
+    menu.show(window.renderer, engine);
+    bool gameRunning = true;
     while(isRunning)
     {
         SDL_Event e;
@@ -41,13 +42,21 @@ int main(int argc, char* argv[])
         }
         if (status == GAME)
         {
-            game.handleEvent(&e, window.renderer);
-            game.render(window.renderer);
+            if (!gameRunning) {
+                SDL_RenderClear(window.renderer);
+                game.renderGameOver(window.renderer, engine);
+            }
+            else 
+            {
+                gameRunning = game.handleEvent(&e, window.renderer, engine);
+                game.render(window.renderer);
+            }
         }
         if (status == HELP)
             help.render(window.renderer);
         if (status == SCOREBOARD)
         {
+            SDL_RenderClear(window.renderer);
             scoreWindow.handleEvent(e);
             scoreWindow.renderUpdate();
         }

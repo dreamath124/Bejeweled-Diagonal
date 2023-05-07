@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <bits/stl_pair.h>
 #include <bitset>
+#include "TextEngine.h"
 enum Gem{
     Red,
     Yellow,
@@ -24,6 +25,7 @@ enum RenderState{
 };
 
 const int boardSize = 8;
+const int maxMove = 24;
 
 class Game{
     std::vector<std::vector<Gem>> boardGem;
@@ -34,6 +36,7 @@ class Game{
     SDL_Texture* gemTexture[GEM_ITEMS];
     SDL_Texture* focus;
     SDL_Texture* background;
+    int countMove;
 public:
     Game();
     void increaseScore(int match);
@@ -41,12 +44,13 @@ public:
     void refill();
     void render(SDL_Renderer *renderer);
     void loadImageGallery(SDL_Renderer *renderer);
-    bool handleEvent(SDL_Event *e, SDL_Renderer* renderer);
+    bool handleEvent(SDL_Event *e, SDL_Renderer *renderer, TextEngine &engine);
     void renderScore(SDL_Renderer *renderer);
     void renderSwap(SDL_Renderer* renderer, int x, int y, int u, int v);
     void renderCellBackground(SDL_Renderer *renderer, int x, int y);
     void renderDisappear(SDL_Renderer *renderer);
     void renderReset(SDL_Renderer* renderer);
+    void renderGameOver(SDL_Renderer *renderer, TextEngine& engine);
     void changeFocusCell(int x, int y)
     {
         focusCell.first = x;

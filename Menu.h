@@ -18,7 +18,7 @@ class Menu{
     Button play, help, exit, scoreboard;
 public:
     Menu(SDL_Renderer* renderer, TextEngine &engine);
-    void show(SDL_Renderer* renderer);
+    void show(SDL_Renderer* renderer, TextEngine& engine);
     EventStatus handleEvent(SDL_Event *e);
 };
 #endif

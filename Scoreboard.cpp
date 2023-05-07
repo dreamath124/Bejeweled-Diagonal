@@ -3,7 +3,7 @@
 void Scoreboard::readHistoryScore()
 {
     std::ifstream reader(this->src);
-    int size;
+    int size = 0;
     reader >> size;
     for (int i = 0; i < size; ++i)
     {

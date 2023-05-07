@@ -31,5 +31,6 @@ void Button::render(SDL_Renderer* renderer)
 {
     SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
     SDL_RenderFillRect(renderer, &rect);
+    
     engine.displayTextbox(label, rect.x + rect.w/2, rect.y + rect.h/2);
 }
